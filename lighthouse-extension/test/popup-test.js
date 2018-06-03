@@ -19,7 +19,7 @@ describe('Lighthouse chrome popup', function() {
 
   let browser;
   let page;
-  let pageErrors = [];
+  const pageErrors = [];
 
   before(async function() {
     // eslint-disable-next-line
@@ -40,6 +40,7 @@ describe('Lighthouse chrome popup', function() {
           selectedCategories: [],
           useDevTools: false,
         }),
+        getDefaultCategories: () => [],
       };
 
       Object.defineProperty(chrome, 'tabs', {
@@ -49,14 +50,14 @@ describe('Lighthouse chrome popup', function() {
               url: 'http://example.com',
             }]);
           },
-        })
+        }),
       });
       Object.defineProperty(chrome, 'runtime', {
         get: () => ({
           getBackgroundPage: cb => {
             cb(backgroundMock);
           },
-        })
+        }),
       });
     });
 

@@ -65,7 +65,7 @@ describe('Lighthouse chrome popup', function() {
       pageErrors.push(err);
     });
 
-    await page.goto(path.join(lighthouseExtensionPath, 'popup.html'), {waitUntil: 'networkidle2'});
+    await page.goto('file://' + path.join(lighthouseExtensionPath, 'popup.html'), {waitUntil: 'networkidle2'});
   });
 
   after(async () => {

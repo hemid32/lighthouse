@@ -88,13 +88,17 @@ class OffscreenImages extends ByteEfficiencyAudit {
   }
 
   /**
+   * Filters out image requests that were requested after the last long task based on lantern timings.
+   *
    * @param {WasteResult[]} images
    * @param {LH.Artifacts.LanternMetric} lanternMetricData
    */
   static filterLanternResults(images, lanternMetricData) {
     const nodeTimings = lanternMetricData.pessimisticEstimate.nodeTimings;
 
+    // Find the last long task start time
     let lastLongTaskStartTime = 0;
+    // Find the start time of all requests
     /** @type {Map<string, number>} */
     const startTimesByURL = new Map();
     for (const [node, timing] of nodeTimings) {
@@ -115,6 +119,8 @@ class OffscreenImages extends ByteEfficiencyAudit {
   }
 
   /**
+   * Filters out image requests that were requested after TTI.
+   *
    * @param {WasteResult[]} images
    * @param {number} interactiveTimestamp
    */
@@ -181,6 +187,7 @@ class OffscreenImages extends ByteEfficiencyAudit {
     return artifacts.requestInteractive({trace, devtoolsLog, settings}).then(interactive => {
       const unfilteredResults = Array.from(resultsMap.values());
       const lanternInteractive = /** @type {LH.Artifacts.LanternMetric} */ (interactive);
+      // Filter out images that were loaded after all CPU activity
       const items = interactive.timestamp ?
         OffscreenImages.filterObservedResults(unfilteredResults, interactive.timestamp) :
         OffscreenImages.filterLanternResults(unfilteredResults, lanternInteractive);
